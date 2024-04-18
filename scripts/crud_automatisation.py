@@ -53,15 +53,15 @@ def main():
 
     # Insert a new user
     data = {
-        "name": "John Doe",
-        "age": 30,
-        "email": "johndoe@example.com",
-        "createdAt": "2021-01-01T00:00:00"
+        "name": "Daflo Poutine",
+        "age": 45,
+        "email": "daflopou@reich.com",
+        "createdAt": "2024-01-01T00:00:00"
     }
     crud.insert(data)
 
     # Delete the newly inserted user
-    query = {"name": "John Doe"}
+    query = {"name": "Daflo Poutine"}
     crud.delete(query)
 
     # Close the connection

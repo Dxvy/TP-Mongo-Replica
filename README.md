@@ -17,9 +17,8 @@ git clone https://github.com/Dxvy/TP-Mongo-Replica.git
 
 ___
 
-Pour configurer les instances de MongoDB en mode ReplicaSet, nous allons utiliser le fichier `docker-compose.yml` qui
-contient la configuration de 3 instances de MongoDB. <br> Il suffit de lancer la commande suivante pour démarrer les instances de MongoDB.
-
+Pour mettre en place les instances de MongoDB en mode ReplicaSet, nous allons employer le fichier `docker-compose.yml` qui décrit la configuration de 3 instances de MongoDB. 
+<br> Il vous suffit d'exécuter la commande ci-dessous pour démarrer ces instances de MongoDB.
 ```bash
 docker-compose up -d
 ```
@@ -30,8 +29,7 @@ Ce qui va créer 3 conteneurs Docker avec les noms suivants:
 - mongo2
 - mongo3
 
-Pour vérifier que les instances MongoDB sont bien démarrées, on peut s'y connecter en utilisant la commande suivante:
-
+Pour s'assurer que les instances MongoDB ont été correctement lancées, il est possible de s'y connecter en utilisant la commande suivante :
 ```bash
 docker exec -it mongo1 bash
 ```
@@ -39,14 +37,12 @@ docker exec -it mongo1 bash
 _Pour les instances mongo2 et mongo3, il suffit de remplacer `mongo1` par `mongo2` ou `mongo3` dans la commande
 ci-dessus._
 
-Puis, on rentre dans l'instance MongoDB en utilisant la commande suivante:
-
+Ensuite, on accède à l'instance MongoDB en utilisant la commande suivante :
 ```bash
 mongosh
 ```
 
-Ensuite, on peut vérifier que les instances sont bien configurées en mode ReplicaSet en exécutant les commandes
-suivantes:
+Par la suite, on peut vérifier que les instances sont correctement configurées en mode ReplicaSet en exécutant les commandes suivantes :
 
 ```bash
 rs.status()
@@ -56,9 +52,8 @@ rs.status()
 
 ___
 
-Pour générer des fausses données, on peut utiliser le script `data_generation.py` qui se trouve dans le
-dossier `scripts`. <br> Mais avant cela, il faut transférer le script vers le conteneur `mongo1` en utilisant la commande suivante (dans notre
-terminal local, pas dans le conteneur) :
+Pour créer des données factices, on peut se servir du script `data_generation.py` situé dans le répertoire `scripts`. 
+<br> Avant cela, il est nécessaire de transférer le script vers le conteneur `mongo1` en utilisant la commande suivante (dans notre terminal local, pas dans le conteneur) :
 
 ```bash
 docker cp .\scripts mongo1:usr/src
@@ -95,21 +90,20 @@ Ceci va nous générer une liste de 100 utilisateurs avec leurs informations res
 
 ___
 
-Il va falloir commencer par insérer les données générées précédemment dans la base de données.
+Il est nécessaire de débuter par l'insertion des données générées précédemment dans la base de données.
 <br>Pour cela, on va effectuer la commande suivante :
 
 ```bash
 mongoimport --db db_cli --collection users --file users.json --jsonArray
 ```
 
-_Cela va insérer les données dans la collection `users` de la base de données `db_cli`. <br>Si la base de données ou la
-collection n'existent pas, elles seront créées automatiquement. <br>Le chemin du
-fichier `users.json` peut varier selon d'où vous exécutez la commande._
+_Cela permettra d'insérer les données dans la collection `users` de la base de données `db_cli`. 
+<br>Si la base de données ou la collection n'existent pas, elles seront créées automatiquement. 
+<br>Le chemin du fichier `users.json` peut être différent en fonction de l'endroit où vous exécutez la commande._
 
-Maintenant que notre base de données est peuplée, on peut effectuer des requêtes pour récupérer des informations.
-On retourne dans le `mongosh` pour effectuer les requêtes.
+Maintenant que notre base de données est remplie, nous pouvons effectuer des requêtes pour récupérer des informations. Pour ce faire, nous retournons dans le `mongosh` pour exécuter les requêtes.
 
-Avant toute commande, il faut selectionner la base de données `db_cli` en utilisant la commande suivante:
+Avant de saisir une commande, il est essentiel de sélectionner la base de données `db_cli` en utilisant la commande suivante:
 
 ```bash
 use db_cli
@@ -156,44 +150,36 @@ db.users.deleteOne({ "name": "John Doe" })
 
 ___
 
-Pour automatiser les manipulations précédentes, on peut utiliser le script `crud_automatisation.py` qui se trouve dans
-le dossier `scripts`. <br> Nous l'avons déjà copié dans le conteneur `mongo1` lors de la génération des données, il suffit donc de se déplacer vers
-le dossier `usr/src/scripts` et d'exécuter le script.
+Pour automatiser les opérations précédentes, le script `crud_automatisation.py` situé dans le dossier `scripts` peut être utilisé. 
+<br>Vous l'avez déjà copié dans le conteneur `mongo1` lors de la génération des données, il vous suffit donc de vous rendre dans le dossier `usr/src/scripts` et d'exécuter le script.
 
 ```bash
 cd usr/src/scripts
 python3 crud_automatisation.py
 ```
 
-Après l'exécution du script, on peut vérifier que les manipulations ont bien été effectuées, car dans un premier temps,
-nous avons un print des utilisateurs trouvés, puis il nous suffit de vérifier dans le `mongosh` que les manipulations
-ont bien été effectuées. <br> On y retrouvera effectivement une nouvelle base, ainsi qu'une nouvelle collection `users`, qui
-contiendra les mêmes users que la précédente base, parce que nous avons récupéré les données du fichier `users.json`. <br> Il
-suffit ensuite d'aller regarder le contenu du script pour voir les manipulations effectuées.
+Après l'exécution du script, vous pouvez vérifier que les opérations ont été effectuées avec succès. Tout d'abord, une liste des utilisateurs trouvés sera affichée, puis vous pourrez 
+vérifier dans le `mongosh` si les manipulations ont été correctement effectuées. <br>Vous trouverez une nouvelle base de données ainsi qu'une nouvelle collection `users`, contenant les mêmes utilisateurs 
+que la base de données précédente, car les données ont été extraites du fichier `users.json`. <br>Il vous suffira ensuite d'examiner le contenu du script pour visualiser les manipulations réalisées.
 
 ## 5. Différences entre les manipulations via la CLI et via Python
 
 ___
 
-Les manipulations effectuées via la CLI et via Python sont les mêmes, mais la différence réside dans le fait que via
-Python, on peut automatiser les manipulations, et donc les répéter autant de fois que nécessaire, sans avoir à retaper
-les
-commandes à chaque fois. <br> Cela permet de gagner du temps et d'augmenter la répétabilité des manipulations. On pourrais
-également envisager
-d'ajouter une gestion d'erreur pour les manipulations via Python, ce qui n'est pas possible via la CLI.
-<br>Cependant, la CLI est plus rapide pour effectuer des manipulations ponctuelles, et est plus adaptée pour des
-manipulations
-simples. <br> Pour des manipulations plus complexes, il est préférable d'utiliser Python, mais il faudra savoir
-à l'avance ce que l'on veut faire, car il faudra écrire le script en conséquence.
+Les actions réalisées via la ligne de commande (CLI) et via Python sont essentiellement les mêmes. La différence réside dans le fait qu'avec Python, il est possible d'automatiser les opérations, 
+ce qui permet de les répéter autant de fois que nécessaire sans avoir à saisir manuellement les commandes à chaque fois. <br> Cela permet un gain de temps et une meilleure reproductibilité des manipulations. 
+De plus, il est envisageable d'ajouter une gestion des erreurs pour les opérations via Python, ce qui n'est pas faisable avec la CLI. 
+
+<br> Cependant, la CLI est plus rapide pour des manipulations ponctuelles et convient davantage pour des tâches simples. <br> Pour des manipulations plus complexes, l'utilisation de Python est préférable, 
+mais il est nécessaire de définir à l'avance ce qui doit être accompli, car le script devra être écrit en conséquence.
 
 ## 6. Difficultés rencontrées
 
 ___
 
-La principale difficulté rencontrée a été le paramétrage du Docker-Compose pour configurer les instances MongoDB en mode
-ReplicaSet. En effet, il a fallu beaucoup de recherches sur des forums et des documentations pour comprendre comment le
-faire. <br> Une autre des difficultés rencontrées a été l'utilisation des scripts pythons pour manipuler les données dans la
-base de données. J'étais d'abord parti sur une autre piste, en voulant utiliser un Dockerfile pour exécuter les scripts
-et installé python et pip, mais je n'ai jamais réussi à le faire démarrer au lancement du docker compose. Au final, j'ai
-finalement trouvé une solution plus simple en copiant les scripts dans le conteneur
-et en les exécutant directement.
+La principale difficulté rencontrée résidait dans la configuration du Docker-Compose pour mettre en place les instances MongoDB en mode ReplicaSet. Ce processus a demandé de nombreuses recherches sur des 
+forums et des documentations pour en comprendre le fonctionnement. 
+
+<br> Une autre difficulté rencontrée était liée à l'utilisation des scripts Python pour manipuler les données dans la base de données. Initialement, j'avais envisagé une approche différente en voulant utiliser 
+un Dockerfile pour exécuter les scripts, installer Python et pip, mais je n'ai jamais réussi à le démarrer lors du lancement du Docker Compose. Finalement, j'ai trouvé une solution plus simple en copiant directement
+les scripts dans le conteneur et en les exécutant à partir de là.
